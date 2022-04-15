@@ -6,4 +6,10 @@
         OnError,
         Always,
     }
+
+    public enum RequestLogSource
+    {
+        Request,
+        RequestAndResponse,
+    }
 }

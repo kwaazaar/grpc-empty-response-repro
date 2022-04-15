@@ -1,8 +1,10 @@
 using GrpcGreeterServerCodeFirst.AI;
 using GrpcGreeterServerCodeFirst.Services;
+using Microsoft.AspNetCore.HttpLogging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ProtoBuf.Grpc.Server;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,13 @@ builder.Services
     .AddSwaggerGenNewtonsoftSupport();
 
 builder.Services.AddApplicationInsights(builder.Configuration);
+builder.Services.AddHttpLogging(o =>
+{
+    o.LoggingFields = HttpLoggingFields.All;
+    o.MediaTypeOptions.AddText("application/grpc-web", Encoding.UTF8);
+    o.MediaTypeOptions.AddText("application/grpc", Encoding.UTF8);
+    o.MediaTypeOptions.AddText("application/json", Encoding.UTF8);
+});
 
 var app = builder.Build();
 
@@ -45,7 +54,9 @@ app.UseSwaggerUI(c =>
 app.UseStaticFiles();
 app.UseCors();
 
+app.UseHttpLogging(); // HttpLogging works fine, but dumps everything is separate entries to ILogger and is therefore useless for production use
 app.UseRequestGrabber(); // Add request and response bodies to AI telemetry (enabled through config)
+
 
 app.UseRouting();
 

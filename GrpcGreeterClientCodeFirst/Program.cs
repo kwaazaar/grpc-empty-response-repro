@@ -14,6 +14,7 @@ namespace GrpcGreeterClientCodeFirst
     {
         private static async Task Main(string[] args)
         {
+            await Task.Delay(3000);
             using (var channel = GrpcChannel.ForAddress("https://localhost:7214", new GrpcChannelOptions
             {
                 HttpHandler = new GrpcWebHandler(new HttpClientHandler())
